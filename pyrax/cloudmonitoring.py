@@ -110,10 +110,10 @@ class CloudMonitoringClient(BaseClient):
         """
         Create the manager to handle instances.
         """
-        self._manager = BaseManager(self,
+        self._manager = CloudMonitoringManager(self,
                 resource_class=CloudMonitoringEntity, uri_base="entities")
-        self._check_manager = BaseManager(self)
-        self._check_type_manager = BaseManager(self)
+        self._check_manager = CloudMonitoringManager(self)
+        self._check_type_manager = CloudMonitoringManager(self)
 
 
     def create(self):
