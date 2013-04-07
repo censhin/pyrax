@@ -120,7 +120,7 @@ class CloudMonitoringClient(BaseClient):
         self._check_type_manager = CloudMonitoringManager(self)
 
 
-    def _create_entity_body(self, label, agent_id=None, ip_addresses=None,
+    def _create_body(self, label, agent_id=None, ip_addresses=None,
             metadata=None):
         """
         Used to create the dict required to create a new entity.
