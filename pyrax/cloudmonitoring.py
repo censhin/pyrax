@@ -135,7 +135,7 @@ class CloudMonitoringClient(BaseClient):
         """
         Used to create the dict required to create a new entity.
         """
-        if (len(label) > 255 || len(label) < 1):
+        if not (1 <= len(label) <= 255):
             raise exc.InvalidSize("The label must be between 1 and "
                     "255 characters long.")
         if len(ip_addresses) > 64:
@@ -167,22 +167,58 @@ class CloudMonitoringClient(BaseClient):
     
     def _create_check_body(self, check_type, details=None, disabled=False,
             label=None, metadata=None, period=None, timeout=None, remote=False,
-            monitoring_zone_polls=None, target_alias=None, target_hostname=None,
+            monitoring_zones_poll=None, target_alias=None, target_hostname=None,
             target_resolver=None):
         """
         Used to create the dict required to create or modify a check.
         """
-        if (len(check_type) > 25 || len(check_type) < 1):
+        if not (1 <= len(check_type) <= 25):
             raise exc.InvalidSize("The type must be between 1 and 25 "
                     "characters long.")
-        if len(details) > 256:
+        if details is None:
+            details = 
+        elif len(details) > 256:
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "elements in details.")
-        if (len(label) > 255 || len(label) < 1):
+        if not (1 <= len(label) <= 255):
             raise exc.InvalidSize("The label must be between 1 and "
                     "255 characters long.")
         if len(metadata) > 256:
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "metadata entries.")
-        if (len(period) > 1800 || len(period) < 30):
-            raise exc.
+        if not (30 <= len(period) <= 1800):
+            raise exc.InvalidRange("The period can only be between 30 "
+                    "and 1800 seconds.")
+        if not (2 <= len(timeout) <= 1800):
+            raise exc.InvalidRange("The timeout can only be between 2 "
+                "and 1800 seconds.")
+        if monitoring_zones_poll is None:
+            monitoring_zones_poll = []
+        if remote is True:
+            if not (1 <= len(target_alias) <= 64):
+                raise exc.InvalidSize("Target alias must be between 1 "
+                        "and 64 characters long.")
+            if not (1 <= len(target_hostname) <= 256):
+                raise exc.InvalidSize("Target hostname must be between "
+                        "1 and 256 characters long.")
+            if target_resolver is None:
+                target_resolver = ""
+            body = {"label": label,
+                    "type": check_type,
+                    "details": details,
+                    "monitoring_zones_poll": monitoring_zones_poll,
+                    "timeout": timeout,
+                    "period": period,
+                    "target_alias": target_alias,
+                    "target_hostname": target_hostname,
+                    "target_resolver": target_resolver
+                    }
+        else:
+            body = {"label": label,
+                    "type": check_type,
+                    "details": details,
+                    "monitoring_zones_poll": monitoring_zones_poll,
+                    "timeout": timeout,
+                    "period": period,
+                    "target_alias": "default"
+                    }
