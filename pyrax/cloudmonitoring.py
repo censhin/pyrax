@@ -18,6 +18,7 @@
 #    under the License.
 
 from functools import wraps
+import re
 
 import pyrax
 from pyrax.client import BaseClient
@@ -25,6 +26,9 @@ import pyrax.exceptions as exc
 from pyrax.manager import BaseManager
 from pyrax.resource import BaseResource
 import pyrax.utils as utils
+
+
+AGENT_ID_PATTERN = re.compile(r"^[-\.\w]{1,255}$", re.VERBOSE)
 
 
 class CloudMonitoringEntity(BaseResource):
@@ -116,5 +120,24 @@ class CloudMonitoringClient(BaseClient):
         self._check_type_manager = CloudMonitoringManager(self)
 
 
-    def create(self):
-        pass
+    def _create_body(self, label, agent_id=None, ip_addresses=None,
+            metadata=None):
+        """
+        Used to create the dict required to create a new entity.
+        """
+        if agent_id is not None:
+            if not AGENT_ID_PATTERN.match(agent_id):
+                raise exc.InvalidAgentID("The agent ID does not match its "
+                        "regular expression pattern.")
+        else:
+            agent_id = ""
+        if len(ip_addresses) > 64:
+            raise exc.InvalidSize("The number of ip addresses must be "
+                    "between 0 and 64.")
+        elif ip_addresses is None:
+            ip_addresses = []
+        if metadata is None:
+            metadata = []
+        elif len(metadata) > 256:
+            raise exc.InvalidSize("There can only be a maximum of 256 "
+                    "metadata entries.")
