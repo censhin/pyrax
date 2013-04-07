@@ -230,3 +230,52 @@ class CloudMonitoringClient(BaseClient):
                     "period": period,
                     "target_alias": "default"
                     }
+        return body
+
+
+    def _create_alarm_body(self, check_id, notification_plan_id, criteria=None,
+            disabled=False, label=None, metadata=None):
+        """
+        Used to create the dict required to create or modify an alarm.
+        """
+        if criteria is None:
+            criteria = ""
+        elif not (1 <= len(criteria) <= 16384):
+            raise exc.InvalidSize("The length of criteria must be between "
+                    "1 and 16384 characters long.")
+        if label is None:
+            label = ""
+        elif not (1 <= len(label) <= 255):
+            raise exc.InvalidSize("The length of label must be between 1 "
+                    "and 255 characters long.")
+        if metadata is None:
+            metadata = {}
+        elif len(metadata) > 256:
+            raise exc.InvalidSize("There can only be a maximium of 256 "
+                    "elements in metadata.")
+        body = {"label": label
+                "check_id": check_id,
+                "criteria": criteria,
+                "notification_plan_id": notification_plan_id,
+                "metadata": metadata
+                }
+        return body
+
+
+    def _create_notification_plan_body(self):
+        pass
+
+
+    def _create_monitoring_zone_body(self):
+        pass
+
+
+    def _create_notification_body(self):
+        pass
+
+
+    def _create_agent_token_body(self, label=None):
+        if label is None:
+            label = ""
+        body = {"label": label}
+        return body
