@@ -120,6 +120,16 @@ class CloudMonitoringClient(BaseClient):
         self._check_type_manager = CloudMonitoringManager(self)
 
 
+    def list_checks(self):
+        """Returns a list of all checks."""
+        pass
+
+
+    def list_check_types(self):
+        """Returns a list of all available check types."""
+        pass
+
+
     def _create_body(self, label, agent_id=None, ip_addresses=None,
             metadata=None):
         """
@@ -162,4 +172,17 @@ class CloudMonitoringClient(BaseClient):
         """
         Used to create the dict required to create or modify a check.
         """
-        pass
+        if (len(check_type) > 25 || len(check_type) < 1):
+            raise exc.InvalidSize("The type must be between 1 and 25 "
+                    "characters long.")
+        if len(details) > 256:
+            raise exc.InvalidSize("There can only be a maximum of 256 "
+                    "elements in details.")
+        if (len(label) > 255 || len(label) < 1):
+            raise exc.InvalidSize("The label must be between 1 and "
+                    "255 characters long.")
+        if len(metadata) > 256:
+            raise exc.InvalidSize("There can only be a maximum of 256 "
+                    "metadata entries.")
+        if (len(period) > 1800 || len(period) < 30):
+            raise exc.
