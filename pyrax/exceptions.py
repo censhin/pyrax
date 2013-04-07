@@ -86,6 +86,9 @@ class KeyringModuleNotInstalled(PyraxException):
 class KeyringUsernameMissing(PyraxException):
     pass
 
+class InvalidAgentID(PyraxException):
+    pass
+
 class InvalidCDNMetadata(PyraxException):
     pass
 
