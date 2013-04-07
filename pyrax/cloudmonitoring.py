@@ -120,24 +120,46 @@ class CloudMonitoringClient(BaseClient):
         self._check_type_manager = CloudMonitoringManager(self)
 
 
-    def _create_body(self, label, agent_id=None, ip_addresses=None,
+    def _create_entity_body(self, label, agent_id=None, ip_addresses=None,
             metadata=None):
         """
         Used to create the dict required to create a new entity.
         """
-        if agent_id is not None:
-            if not AGENT_ID_PATTERN.match(agent_id):
-                raise exc.InvalidAgentID("The agent ID does not match its "
-                        "regular expression pattern.")
-        else:
-            agent_id = ""
+        if (len(label) > 255 || len(label) < 1):
+            raise exc.InvalidSize("The label must be between 1 and "
+                    "255 characters long.")
         if len(ip_addresses) > 64:
             raise exc.InvalidSize("The number of ip addresses must be "
                     "between 0 and 64.")
         elif ip_addresses is None:
-            ip_addresses = []
+            ip_addresses = {}
         if metadata is None:
-            metadata = []
+            metadata = {}
         elif len(metadata) > 256:
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "metadata entries.")
+        if agent_id is not None:
+            if not AGENT_ID_PATTERN.match(agent_id):
+                raise exc.InvalidAgentID("The agent ID does not match its "
+                        "regular expression pattern.")
+            body = {"id": agent_id,
+                    "label": label,
+                    "ip_addresses": ip_addresses,
+                    "metadata": metadata
+                    }
+        else:
+            body = {"label": label,
+                    "ip_addresses": ip_addresses,
+                    "metadata": metadata
+                    }
+        return body
+
+    
+    def _create_check_body(self, check_type, details=None, disabled=False,
+            label=None, metadata=None, period=None, timeout=None, remote=False,
+            monitoring_zone_polls=None, target_alias=None, target_hostname=None,
+            target_resolver=None):
+        """
+        Used to create the dict required to create or modify a check.
+        """
+        pass
