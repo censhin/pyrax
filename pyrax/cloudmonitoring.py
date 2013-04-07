@@ -176,14 +176,18 @@ class CloudMonitoringClient(BaseClient):
             raise exc.InvalidSize("The type must be between 1 and 25 "
                     "characters long.")
         if details is None:
-            details = 
+            details = {}
         elif len(details) > 256:
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "elements in details.")
-        if not (1 <= len(label) <= 255):
+        if label is None:
+            label = ""
+        elif not (1 <= len(label) <= 255):
             raise exc.InvalidSize("The label must be between 1 and "
                     "255 characters long.")
-        if len(metadata) > 256:
+        if metadata is None:
+            metadata = {}
+        elif len(metadata) > 256:
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "metadata entries.")
         if not (30 <= len(period) <= 1800):
@@ -195,10 +199,14 @@ class CloudMonitoringClient(BaseClient):
         if monitoring_zones_poll is None:
             monitoring_zones_poll = []
         if remote is True:
-            if not (1 <= len(target_alias) <= 64):
+            if target_alias is None:
+                target_alias = ""
+            elif not (1 <= len(target_alias) <= 64):
                 raise exc.InvalidSize("Target alias must be between 1 "
                         "and 64 characters long.")
-            if not (1 <= len(target_hostname) <= 256):
+            if target_hostname is None:
+                target_hostname = ""
+            elif not (1 <= len(target_hostname) <= 256):
                 raise exc.InvalidSize("Target hostname must be between "
                         "1 and 256 characters long.")
             if target_resolver is None:
