@@ -110,6 +110,9 @@ class InvalidNodeCondition(PyraxException):
 class InvalidNodeParameters(PyraxException):
     pass
 
+class InvalidNotificationType(PyraxException):
+    pass
+
 class InvalidPTRRecord(PyraxException):
     pass
 
