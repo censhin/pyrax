@@ -46,6 +46,22 @@ class CloudMonitoringEntity(BaseResource):
                 agent_id=agent_id)
 
 
+    def list_checks(self):
+        """
+        Returns a list of all checks for this entity.
+        """
+        return [chk for chk in self.manager.list_checks(self)
+                if chk.entity_id == self.id]
+
+
+    def list_alarms(self):
+        """
+        Returns a list of all alarms for this entity.
+        """
+        return [alm for alm in self.manager.list_alarms(self)
+                if alm.entity_id == self.id]
+
+
 class CloudMonitoringCheck(BaseResource):
     """
     This class represents a Cloud Monitoring Check.
@@ -53,9 +69,9 @@ class CloudMonitoringCheck(BaseResource):
     pass
 
 
-class CloudMonitoringCheckType(BaseResource):
+class CloudMonitoringAlarm(BaseResource):
     """
-    This class represents a Cloud Monitoring Check Type.
+    This class represents a Cloud Monitoring Alarm.
     """
     pass
 
@@ -113,8 +129,33 @@ class CloudMonitoringManager(BaseManager):
             return body
         return self.resource_class(self, body)
 
-    def update_entity(self):
+
+    def update_entity(self, entity, metadata=None, agent_id=None):
         pass
+
+
+    def list_checks(self, entity):
+        """
+        List the checks associated with a given entityId.
+        """
+        uri = "/entities/%s/checks" % (utils.get_id(entity))
+        return self._list_checks(uri)
+
+
+    def _list_checks(self, uri):
+        resp, body = self.api.method_get(uri)
+
+
+    def list_alarms(self, entity):
+        """
+        List the alarms associated with a given entityId.
+        """
+        uri = "/entities/%s/alarms" % (utils.get_id(entity))
+        return self._list_alarms(uri)
+
+
+    def _list_alarms(self, uri):
+        resp, body = self.api.method_get(uri)
 
 
 class CloudMonitoringClient(BaseClient):
@@ -129,17 +170,28 @@ class CloudMonitoringClient(BaseClient):
                 resource_class=CloudMonitoringEntity, uri_base="entities")
         self._check_manager = CloudMonitoringManager(self,
                 resource_class=CloudMonitoringCheck, uri_base="entities")
-        self._check_type_manager = CloudMonitoringManager(self)
+        self._alarm_manager = CloudMonitoringManager(self,
+                resource_class=CloudMonitoringAlarm, uri_base="entities")
+        self._check_type_manager = CloudMonitoringManager(self, uri_base="check_types")
 
 
-    def list_checks(self):
-        """Returns a list of all checks."""
-        return self._check_manager.list_checks()
+    def list_checks(self, entity):
+        """
+        Returns a list of all checks for a specified entity.
+        """
+        return self._check_manager.list_checks(entity)
 
 
     def list_check_types(self):
         """Returns a list of all available check types."""
         return self._check_type_manager.list()
+
+
+    def list_alarms(self, entity):
+        """
+        Returns a list of all alarms for a specified entity.
+        """
+        return self._alarm_manager.list_alarms(entity)
 
 
     def _create_body(self, label, agent_id=None, ip_addresses=None,
