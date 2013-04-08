@@ -35,7 +35,15 @@ class CloudMonitoringEntity(BaseResource):
     """
     This class represents a Cloud Monitoring Entity.
     """
-    pass
+    def update(self, metadata=None, agent_id=None):
+        """
+        Provides a way to modify the following attributes of
+        an entity:
+            - metadata
+            - agent id
+        """
+        return self.manager.update_entity(self, metadata=metadata,
+                agent_id=agent_id)
 
 
 class CloudMonitoringCheck(BaseResource):
@@ -105,6 +113,9 @@ class CloudMonitoringManager(BaseManager):
             return body
         return self.resource_class(self, body)
 
+    def update_entity(self):
+        pass
+
 
 class CloudMonitoringClient(BaseClient):
     """
@@ -116,18 +127,19 @@ class CloudMonitoringClient(BaseClient):
         """
         self._manager = CloudMonitoringManager(self,
                 resource_class=CloudMonitoringEntity, uri_base="entities")
-        self._check_manager = CloudMonitoringManager(self)
+        self._check_manager = CloudMonitoringManager(self,
+                resource_class=CloudMonitoringCheck, uri_base="entities")
         self._check_type_manager = CloudMonitoringManager(self)
 
 
     def list_checks(self):
         """Returns a list of all checks."""
-        pass
+        return self._check_manager.list_checks()
 
 
     def list_check_types(self):
         """Returns a list of all available check types."""
-        pass
+        return self._check_type_manager.list()
 
 
     def _create_body(self, label, agent_id=None, ip_addresses=None,
