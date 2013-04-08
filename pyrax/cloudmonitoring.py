@@ -296,7 +296,12 @@ class CloudMonitoringClient(BaseClient):
             raise exc.InvalidSize("The length of label must be between 1 "
                     "and 255 characters long.")
         if "webhook" or "email" not in notification_type:
-            raise exc.
+            raise exc.InvalidNotificationType("The notification type must "
+                    "be \"webhook\" or \"email\".")
+        body = {"label": label,
+                "type": notification_type,
+                "details": details
+                }
         return body
 
 
