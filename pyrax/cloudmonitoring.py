@@ -62,6 +62,13 @@ class CloudMonitoringEntity(BaseResource):
                 if alm.entity_id == self.id]
 
 
+    def create_check(self):
+        """
+        Create a check for this entity.
+        """
+        pass
+
+
 class CloudMonitoringCheck(BaseResource):
     """
     This class represents a Cloud Monitoring Check.
@@ -139,11 +146,7 @@ class CloudMonitoringManager(BaseManager):
         List the checks associated with a given entityId.
         """
         uri = "/entities/%s/checks" % (utils.get_id(entity))
-        return self._list_checks(uri)
-
-
-    def _list_checks(self, uri):
-        resp, body = self.api.method_get(uri)
+        return self._lists(uri)
 
 
     def list_alarms(self, entity):
@@ -151,11 +154,7 @@ class CloudMonitoringManager(BaseManager):
         List the alarms associated with a given entityId.
         """
         uri = "/entities/%s/alarms" % (utils.get_id(entity))
-        return self._list_alarms(uri)
-
-
-    def _list_alarms(self, uri):
-        resp, body = self.api.method_get(uri)
+        return self._list(uri)
 
 
 class CloudMonitoringClient(BaseClient):
