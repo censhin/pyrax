@@ -262,19 +262,48 @@ class CloudMonitoringClient(BaseClient):
         return body
 
 
-    def _create_notification_plan_body(self):
-        pass
+    def _create_notification_plan_body(self, label, critical_state=None,
+            ok_state=None, warning_state=None):
+        """
+        Used to create the dict required to create a notification
+        plan."
+        """
+        if not (1 <= len(label) <= 255):
+            raise exc.InvalidSize("The length of label must be between 1 "
+                    "and 255 characters long.")
+        if critical_state is None:
+            critical_state = []
+        if ok_state is None:
+            ok_state = []
+        if warning_state is None:
+            warning_state = []
+        body = {"label": label,
+                "warning_state": warning_state,
+                "ok_state": ok_state,
+                "critical_state": critical_state
+                }
+        return body
 
 
-    def _create_monitoring_zone_body(self):
-        pass
-
-
-    def _create_notification_body(self):
-        pass
+    def _create_notification_body(self, details, label, notification_type):
+        """
+        Used to create the dict required to create a notification.
+        """
+        if len(details) > 256:
+            raise exc.InvalidSize("There can only be a maximum of 256 "
+                    "elements in details.")
+        if not (1 <= len(label) <= 255):
+            raise exc.InvalidSize("The length of label must be between 1 "
+                    "and 255 characters long.")
+        if "webhook" or "email" not in notification_type:
+            raise exc.
+        return body
 
 
     def _create_agent_token_body(self, label=None):
+        """
+        Used to create the dict required to create an agent token.
+        """
         if label is None:
             label = ""
         body = {"label": label}
