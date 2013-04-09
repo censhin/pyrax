@@ -73,6 +73,7 @@ try:
     from cloudblockstorage import CloudBlockStorageClient
     from clouddns import CloudDNSClient
     from cloudnetworks import CloudNetworkClient
+    from cloudmonitoring import CloudMonitoringClient
 except ImportError:
     # See if this is the result of the importing of version.py in setup.py
     callstack = inspect.stack()
@@ -92,6 +93,7 @@ cloud_databases = None
 cloud_blockstorage = None
 cloud_dns = None
 cloud_networks = None
+cloud_monitoring = None
 # Class used to handle auth/identity
 identity_class = None
 # Default identity type.
@@ -263,6 +265,7 @@ def clear_credentials():
     """De-authenticate by clearing all the names back to None."""
     global identity, cloudservers, cloudfiles, cloud_loadbalancers
     global cloud_databases, cloud_blockstorage, cloud_dns, cloud_networks
+    global cloud_monitoring
     identity = identity_class()
     cloudservers = None
     cloudfiles = None
@@ -271,6 +274,7 @@ def clear_credentials():
     cloud_blockstorage = None
     cloud_dns = None
     cloud_networks = None
+    cloud_monitoring = None
 
 
 def set_default_region(region):
@@ -293,7 +297,7 @@ def _make_agent_name(base):
 def connect_to_services(region=None):
     """Establishes authenticated connections to the various cloud APIs."""
     global cloudservers, cloudfiles, cloud_loadbalancers, cloud_databases
-    global cloud_blockstorage, cloud_dns, cloud_networks
+    global cloud_blockstorage, cloud_dns, cloud_networks, cloud_monitoring
     cloudservers = connect_to_cloudservers(region=region)
     cloudfiles = connect_to_cloudfiles(region=region)
     cloud_loadbalancers = connect_to_cloud_loadbalancers(region=region)
@@ -301,6 +305,7 @@ def connect_to_services(region=None):
     cloud_blockstorage = connect_to_cloud_blockstorage(region=region)
     cloud_dns = connect_to_cloud_dns(region=region)
     cloud_networks = connect_to_cloud_networks(region=region)
+    cloud_monitoring = connect_to_cloud_monitoring(region=region)
 
 
 def _fix_uri(ep, region):
@@ -468,6 +473,21 @@ def connect_to_cloud_networks(region=None):
             tenant_id=identity.tenant_id, service_type="compute")
     cloud_networks.user_agent = _make_agent_name(cloud_networks.user_agent)
     return cloud_networks
+
+
+@_require_auth
+def connect_to_cloud_monitoring(region=None):
+    """Creates a client for working with cloud monitoring."""
+    region = safe_region(region)
+    # Networks uses the same endpoint as compute
+    ep = _get_service_endpoint("monitor", region)
+    cloud_monitoring = CloudMonitoringClient(identity.username, identity.api_key,
+            region_name=region, management_url=ep, auth_token=identity.token,
+#            http_log_debug=_http_debug,
+            http_log_debug=True,
+            tenant_id=identity.tenant_id, service_type="monitor")
+    cloud_monitoring.user_agent = _make_agent_name(cloud_monitoring.user_agent)
+    return cloud_monitoring
 
 
 def get_http_debug():

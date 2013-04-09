@@ -76,6 +76,13 @@ class CloudMonitoringCheck(BaseResource):
     pass
 
 
+class CloudMonitoringCheckType(BaseResource):
+    """
+    This class represents a type of Cloud Monitoring Check.
+    """
+    pass
+
+
 class CloudMonitoringAlarm(BaseResource):
     """
     This class represents a Cloud Monitoring Alarm.
@@ -171,7 +178,8 @@ class CloudMonitoringClient(BaseClient):
                 resource_class=CloudMonitoringCheck, uri_base="entities")
         self._alarm_manager = CloudMonitoringManager(self,
                 resource_class=CloudMonitoringAlarm, uri_base="entities")
-        self._check_type_manager = CloudMonitoringManager(self, uri_base="check_types")
+        self._check_type_manager = CloudMonitoringManager(self,
+                uri_base="check_types", resource_class=CloudMonitoringCheckType)
 
 
     def list_checks(self, entity):
@@ -316,11 +324,11 @@ class CloudMonitoringClient(BaseClient):
         elif len(metadata) > 256:
             raise exc.InvalidSize("There can only be a maximium of 256 "
                     "elements in metadata.")
-        body = {"label": label
+        body = {"label": label,
                 "check_id": check_id,
                 "criteria": criteria,
                 "notification_plan_id": notification_plan_id,
-                "metadata": metadata
+                "metadata": metadata,
                 }
         return body
 
