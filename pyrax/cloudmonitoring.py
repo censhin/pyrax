@@ -146,7 +146,7 @@ class CloudMonitoringManager(BaseManager):
         List the checks associated with a given entityId.
         """
         uri = "/entities/%s/checks" % (utils.get_id(entity))
-        return self._lists(uri)
+        return self._list(uri)
 
 
     def list_alarms(self, entity):
