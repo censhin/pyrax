@@ -211,7 +211,7 @@ class CloudMonitoringClient(BaseClient):
                     "255 characters long.")
         if ip_addresses is None:
             ip_addresses = {}
-        if len(ip_addresses) > 64:
+        elif len(ip_addresses) > 64:
             raise exc.InvalidSize("The number of ip addresses must be "
                     "between 0 and 64.")
         if metadata is None:
