@@ -201,11 +201,11 @@ class CloudMonitoringClient(BaseClient):
         if not (1 <= len(label) <= 255):
             raise exc.InvalidSize("The label must be between 1 and "
                     "255 characters long.")
+        if ip_addresses is None:
+            ip_addresses = {}
         if len(ip_addresses) > 64:
             raise exc.InvalidSize("The number of ip addresses must be "
                     "between 0 and 64.")
-        elif ip_addresses is None:
-            ip_addresses = {}
         if metadata is None:
             metadata = {}
         elif len(metadata) > 256:
