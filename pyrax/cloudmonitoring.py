@@ -136,6 +136,8 @@ class CloudMonitoringManager(BaseManager):
         """
         self.run_hooks("modify_body_for_create", body, **kwargs)
         _resp, body = self.api.method_post(uri, body=body)
+        resp_uri = "%s/%s" % (uri, _resp["x-object-id"])
+        _resp, body = self.api.method_get(resp_uri)
         if return_none:
             # No response body
             return
