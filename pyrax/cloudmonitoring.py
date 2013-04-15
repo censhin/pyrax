@@ -35,15 +35,26 @@ class CloudMonitoringEntity(BaseResource):
     """
     This class represents a Cloud Monitoring Entity.
     """
-    def update(self, metadata=None, agent_id=None):
+    #TODO finish creating checks for attributes
+    def update(self, label=None, ip_addresses=None, metadata=None,
+            agent_id=None):
         """
         Provides a way to modify the following attributes of
-        an entity:
+        an entity if the account is not managed:
+            - label
+            - ip addresses
             - metadata
             - agent id
+        If the account is managed, only the metadata and
+        agent id fields can be updated.
         """
-        return self.manager.update_entity(self, metadata=metadata,
-                agent_id=agent_id)
+        if self.managed is False:
+            return self.manager.update_entity(self, label=label,
+                    ip_addresses=ip_addresses, metadata=metadata,
+                    agent_id=agent_id)
+        else:
+            return self.manager.update_entity(self, metadata=metadata,
+                    agent_id=agent_id)
 
 
     def list_checks(self):
@@ -62,6 +73,7 @@ class CloudMonitoringEntity(BaseResource):
                 if alm.entity_id == self.id]
 
 
+    #TODO
     def create_check(self):
         """
         Create a check for this entity.
@@ -146,6 +158,7 @@ class CloudMonitoringManager(BaseManager):
         return self.resource_class(self, body)
 
 
+    #TODO
     def update_entity(self, entity, metadata=None, agent_id=None):
         pass
 
