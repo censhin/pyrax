@@ -65,12 +65,13 @@ class CloudMonitoringEntity(BaseResource):
                 if alm.entity_id == self.id]
 
 
-    #TODO
-    def create_check(self):
+    def create_check(self, name, return_none=False, return_raw=False):
         """
         Create a check for this entity.
         """
-        pass
+        check = self._check_manager.create_check(self, name,
+                return_none=return_none, return_raw=return_raw)
+        return check
 
 
 class CloudMonitoringCheck(BaseResource):
@@ -98,6 +99,7 @@ class CloudMonitoringManager(BaseManager):
     """
     Created to override the methods _list, _get, and
     _create to change body[self.response_key] to body.
+    Also handles Cloud Monitoring specific methods.
     """
     def _list(self, uri, obj_class=None, body=None):
         """
@@ -170,7 +172,7 @@ class CloudMonitoringManager(BaseManager):
             ip_addresses = entity.ip_addresses
         if metadata is None:
             metadata = entity.metadata
-        uri = "/entities/%s" % entity.id
+        uri = "/entities/%s" % (utils.get_id(entity))
         body = {"label": label,
                 "agent_id": agent_id,
                 "ip_addresses": ip_addresses,
@@ -186,6 +188,17 @@ class CloudMonitoringManager(BaseManager):
         """
         uri = "/entities/%s/checks" % (utils.get_id(entity))
         return self._list(uri)
+
+
+    def create_check(self, entity, name, return_none=False, return_raw=False,
+            *args, **kwargs):
+        """
+        Creates a check for the specified entity.
+        """
+        body = self.api._create_check_body(name, *args, **kwargs)
+        uri = "/entities/%s/checks" % (utils.get_id(entity))
+        return self._create(uri, body, return_none=return_none,
+                return_raw=return_raw)
 
 
     def list_alarms(self, entity):
@@ -222,7 +235,9 @@ class CloudMonitoringClient(BaseClient):
 
 
     def list_check_types(self):
-        """Returns a list of all available check types."""
+        """
+        Returns a list of all available check types.
+        """
         return self._check_type_manager.list()
 
 
