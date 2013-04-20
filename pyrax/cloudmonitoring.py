@@ -239,12 +239,12 @@ class CloudMonitoringClient(BaseClient):
         Used to create the dict required to create a new entity.
         """
         if not (1 <= len(label) <= 255):
-            raise exc.InvalidSize("The label must be between 1 and "
+            raise exc.InvalidRange("The label must be between 1 and "
                     "255 characters long.")
         if ip_addresses is None:
             ip_addresses = {}
         elif len(ip_addresses) > 64:
-            raise exc.InvalidSize("The number of ip addresses must be "
+            raise exc.InvalidRange("The number of ip addresses must be "
                     "between 0 and 64.")
         if metadata is None:
             metadata = {}
@@ -276,7 +276,7 @@ class CloudMonitoringClient(BaseClient):
         Used to create the dict required to create or modify a check.
         """
         if not (1 <= len(check_type) <= 25):
-            raise exc.InvalidSize("The type must be between 1 and 25 "
+            raise exc.InvalidRange("The type must be between 1 and 25 "
                     "characters long.")
         if details is None:
             details = {}
@@ -286,7 +286,7 @@ class CloudMonitoringClient(BaseClient):
         if label is None:
             label = ""
         elif not (1 <= len(label) <= 255):
-            raise exc.InvalidSize("The label must be between 1 and "
+            raise exc.InvalidRange("The label must be between 1 and "
                     "255 characters long.")
         if metadata is None:
             metadata = {}
@@ -305,12 +305,12 @@ class CloudMonitoringClient(BaseClient):
             if target_alias is None:
                 target_alias = ""
             elif not (1 <= len(target_alias) <= 64):
-                raise exc.InvalidSize("Target alias must be between 1 "
+                raise exc.InvalidRange("Target alias must be between 1 "
                         "and 64 characters long.")
             if target_hostname is None:
                 target_hostname = ""
             elif not (1 <= len(target_hostname) <= 256):
-                raise exc.InvalidSize("Target hostname must be between "
+                raise exc.InvalidRange("Target hostname must be between "
                         "1 and 256 characters long.")
             if target_resolver is None:
                 target_resolver = ""
@@ -344,12 +344,12 @@ class CloudMonitoringClient(BaseClient):
         if criteria is None:
             criteria = ""
         elif not (1 <= len(criteria) <= 16384):
-            raise exc.InvalidSize("The length of criteria must be between "
+            raise exc.InvalidRange("The length of criteria must be between "
                     "1 and 16384 characters long.")
         if label is None:
             label = ""
         elif not (1 <= len(label) <= 255):
-            raise exc.InvalidSize("The length of label must be between 1 "
+            raise exc.InvalidRange("The length of label must be between 1 "
                     "and 255 characters long.")
         if metadata is None:
             metadata = {}
@@ -372,7 +372,7 @@ class CloudMonitoringClient(BaseClient):
         plan."
         """
         if not (1 <= len(label) <= 255):
-            raise exc.InvalidSize("The length of label must be between 1 "
+            raise exc.InvalidRange("The length of label must be between 1 "
                     "and 255 characters long.")
         if critical_state is None:
             critical_state = []
@@ -396,7 +396,7 @@ class CloudMonitoringClient(BaseClient):
             raise exc.InvalidSize("There can only be a maximum of 256 "
                     "elements in details.")
         if not (1 <= len(label) <= 255):
-            raise exc.InvalidSize("The length of label must be between 1 "
+            raise exc.InvalidRange("The length of label must be between 1 "
                     "and 255 characters long.")
         if "webhook" or "email" not in notification_type:
             raise exc.InvalidNotificationType("The notification type must "
