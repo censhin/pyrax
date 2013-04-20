@@ -35,18 +35,10 @@ class CloudMonitoringEntity(BaseResource):
     """
     This class represents a Cloud Monitoring Entity.
     """
-    #TODO finish creating checks for attributes
-    def update(self, label=None, ip_addresses=None, metadata=None,
-            agent_id=None):
+    def update(self, label=None, agent_id=None, ip_addresses=None,
+            metadata=None):
         """
-        Provides a way to modify the following attributes of
-        an entity if the account is not managed:
-            - label
-            - ip addresses
-            - metadata
-            - agent id
-        If the account is managed, only the metadata and
-        agent id fields can be updated.
+        Updates this entity.
         """
         if self.managed is False:
             return self.manager.update_entity(self, label=label,
@@ -158,9 +150,34 @@ class CloudMonitoringManager(BaseManager):
         return self.resource_class(self, body)
 
 
-    #TODO
-    def update_entity(self, entity, metadata=None, agent_id=None):
-        pass
+    def update_entity(self, entity, label=None, agent_id=None, ip_addresses=None,
+            metadata=None):
+        """
+        Provides a way to modify the following attributes of
+        an entity if the account is not managed:
+            - label
+            - ip addresses
+            - metadata
+            - agent id
+        If the account is managed, only the metadata and
+        agent id fields can be updated.
+        """
+        if label is None:
+            label = entity.label
+        if agent_id is None:
+            agent_id = entity.agent_id
+        if ip_addresses is None:
+            ip_addresses = entity.ip_addresses
+        if metadata is None:
+            metadata = entity.metadata
+        uri = "/entities/%s" % entity.id
+        body = {"label": label,
+                "agent_id": agent_id,
+                "ip_addresses": ip_addresses,
+                "metadata": metadata
+                }
+        _resp, body = self.api.method_put(uri, body=body)
+        return body
 
 
     def list_checks(self, entity):
