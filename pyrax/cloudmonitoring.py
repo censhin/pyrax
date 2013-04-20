@@ -57,12 +57,12 @@ class CloudMonitoringEntity(BaseResource):
                 if chk.entity_id == self.id]
 
 
-    def list_alarms(self):
+    #TODO
+    def get_check(self, check):
         """
-        Returns a list of all alarms for this entity.
+        Gets a specific check for this entity.
         """
-        return [alm for alm in self.manager.list_alarms(self)
-                if alm.entity_id == self.id]
+        pass
 
 
     def create_check(self, name, check_type, return_none=False,
@@ -74,6 +74,14 @@ class CloudMonitoringEntity(BaseResource):
                 return_none=return_none, return_raw=return_raw, *args,
                 **kwargs)
         return check
+
+
+    def list_alarms(self):
+        """
+        Returns a list of all alarms for this entity.
+        """
+        return [alm for alm in self.manager.list_alarms(self)
+                if alm.entity_id == self.id]
 
 
 class CloudMonitoringCheck(BaseResource):
@@ -192,6 +200,15 @@ class CloudMonitoringManager(BaseManager):
         return self._list(uri)
 
 
+    def get_check(self, entity, check):
+        """
+        Gets a check for the specified entity. 
+        """
+        uri = "/entities/%s/checks/%s" % (utils.get_id(entity),
+                utils.get_id(check))
+        return self._get(uri)
+
+
     def create_check(self, entity, name, check_type, return_none=False,
             return_raw=False, *args, **kwargs):
         """
@@ -202,6 +219,16 @@ class CloudMonitoringManager(BaseManager):
         uri = "/entities/%s/checks" % (utils.get_id(entity))
         return self._create(uri, body, return_none=return_none,
                 return_raw=return_raw)
+
+
+    #TODO
+    def update_check(self):
+        pass
+
+
+    #TODO
+    def delete_check(self):
+        pass
 
 
     def list_alarms(self, entity):
