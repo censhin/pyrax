@@ -65,12 +65,14 @@ class CloudMonitoringEntity(BaseResource):
                 if alm.entity_id == self.id]
 
 
-    def create_check(self, name, return_none=False, return_raw=False):
+    def create_check(self, name, check_type, return_none=False,
+            return_raw=False, *args, **kwargs):
         """
         Create a check for this entity.
         """
-        check = self._check_manager.create_check(self, name,
-                return_none=return_none, return_raw=return_raw)
+        check = self._check_manager.create_check(self, name, check_type,
+                return_none=return_none, return_raw=return_raw, *args,
+                **kwargs)
         return check
 
 
@@ -190,12 +192,13 @@ class CloudMonitoringManager(BaseManager):
         return self._list(uri)
 
 
-    def create_check(self, entity, name, return_none=False, return_raw=False,
-            *args, **kwargs):
+    def create_check(self, entity, name, check_type, return_none=False,
+            return_raw=False, *args, **kwargs):
         """
         Creates a check for the specified entity.
         """
-        body = self.api._create_check_body(name, *args, **kwargs)
+        body = self.api._create_check_body(check_type, label=name, *args,
+                **kwargs)
         uri = "/entities/%s/checks" % (utils.get_id(entity))
         return self._create(uri, body, return_none=return_none,
                 return_raw=return_raw)
@@ -283,10 +286,10 @@ class CloudMonitoringClient(BaseClient):
         return body
 
     
-    def _create_check_body(self, check_type, details=None, disabled=False,
-            label=None, metadata=None, period=None, timeout=None, remote=False,
-            monitoring_zones_poll=None, target_alias=None, target_hostname=None,
-            target_resolver=None):
+    def _create_check_body(self, check_type, label=None, details=None,
+            disabled=False, metadata=None, period=None, timeout=None,
+            remote=False, monitoring_zones_poll=None, target_alias=None,
+            target_hostname=None, target_resolver=None):
         """
         Used to create the dict required to create or modify a check.
         """
