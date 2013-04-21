@@ -221,9 +221,62 @@ class CloudMonitoringManager(BaseManager):
                 return_raw=return_raw)
 
 
-    #TODO
-    def update_check(self):
-        pass
+    def update_check(self, entity, check, check_type=None, label=None,
+            details=None, disabled=False, metadata=None, period=None,
+            timeout=None, remote=False, monitoring_zones_poll=None,
+            target_alias=None, target_hostname=None, target_resolver=None):
+        """
+        Provides a way to update all attributes of a check.
+        """
+        if check_type is None:
+            check_type = check.check_type
+        if label is None:
+            label = check.label
+        if details is None:
+            details = check.details
+        if metadata is None:
+            metadata = check.metadata
+        if period is None:
+            period = check.period
+        if timeout is None:
+            timeout = check.timeout
+        if monitoring_zones_poll is None:
+            monitoring_zones_poll = check.monitoring_zones_poll
+        if target_alias is None:
+            target_alias = check.target_alias
+        if target_hostname is None:
+            target_hostname = check.target_hostname
+        if target_resolver is None:
+            target_resolver = check.target_resolver
+        if remote is True:
+            if target_alias is None:
+                target_alias = check.target_alias
+            if target_hostname is None:
+                target_hostname = check.target_hostname
+            if target_resolver is None:
+                target_resolver = check.target_resolver
+            body = {"label": label,
+                    "type": check_type,
+                    "details": details,
+                    "monitoring_zones_poll": monitoring_zones_poll,
+                    "timeout": timeout,
+                    "period": period,
+                    "target_alias": target_alias,
+                    "target_hostname": target_hostname,
+                    "target_resolver": target_resolver
+                    }
+        else:
+            body = {"label": label,
+                    "type": check_type,
+                    "details": details,
+                    "monitoring_zones_poll": monitoring_zones_poll,
+                    "timeout": timeout,
+                    "period": period,
+                    }
+        uri = "/entities/%s/checks/%s" % (utils.get_id(entity),
+                utils.get_id(check))
+        _resp, body = self.api.method_put(uri, body=body)
+        return body
 
 
     #TODO
