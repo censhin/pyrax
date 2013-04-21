@@ -57,12 +57,11 @@ class CloudMonitoringEntity(BaseResource):
                 if chk.entity_id == self.id]
 
 
-    #TODO
     def get_check(self, check):
         """
         Gets a specific check for this entity.
         """
-        pass
+        return self.manager.get_check(self, check)
 
 
     def create_check(self, name, check_type, return_none=False,
@@ -222,8 +221,8 @@ class CloudMonitoringManager(BaseManager):
 
 
     def update_check(self, entity, check, check_type=None, label=None,
-            details=None, disabled=False, metadata=None, period=None,
-            timeout=None, remote=False, monitoring_zones_poll=None,
+            details=None, disabled=None, metadata=None, period=None,
+            timeout=None, remote=None, monitoring_zones_poll=None,
             target_alias=None, target_hostname=None, target_resolver=None):
         """
         Provides a way to update all attributes of a check.
@@ -234,12 +233,16 @@ class CloudMonitoringManager(BaseManager):
             label = check.label
         if details is None:
             details = check.details
+        if disabled is None:
+            disabled = check.disabled
         if metadata is None:
             metadata = check.metadata
         if period is None:
             period = check.period
         if timeout is None:
             timeout = check.timeout
+        if remote is None:
+            remote = check.remote
         if monitoring_zones_poll is None:
             monitoring_zones_poll = check.monitoring_zones_poll
         if target_alias is None:
@@ -279,9 +282,13 @@ class CloudMonitoringManager(BaseManager):
         return body
 
 
-    #TODO
-    def delete_check(self):
-        pass
+    def delete_check(self, entity, check):
+        """
+        Deletes the specified check for the specified entity.
+        """
+        uri = "/entities/%s/checks/%s" % (utils.get_id(entity),
+                utils.get_id(check))
+        return self._delete(uri)
 
 
     def list_alarms(self, entity):
