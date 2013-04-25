@@ -299,8 +299,13 @@ class CloudMonitoringManager(BaseManager):
         return self._list(uri)
 
 
-    def get_alarm(self, entity):
-        pass
+    def get_alarm(self, entity, alarm):
+        """
+        Gets an alarm for the specified entity.
+        """
+        uri = "/entities/%s/alarms/%s" % (utils.get_id(entity),
+                utils.get_id(alarm))
+        return self._get(uri)
 
 
     def create_alarm(self, entity, check_id, notification_plan_id, *args,
@@ -320,7 +325,12 @@ class CloudMonitoringManager(BaseManager):
 
 
     def delete_alarm(self, entity, alarm):
-        pass
+        """
+        Deletes the specified alarm for the specified entity.
+        """
+        uri = "/entities/%s/alarms/%s" % (utils.get_id(entity),
+                utils.get_id(alarm))
+        return self._delete(uri)
 
 
 class CloudMonitoringClient(BaseClient):
