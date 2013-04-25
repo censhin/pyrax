@@ -299,6 +299,30 @@ class CloudMonitoringManager(BaseManager):
         return self._list(uri)
 
 
+    def get_alarm(self, entity):
+        pass
+
+
+    def create_alarm(self, entity, check_id, notification_plan_id, *args,
+            **kwargs):
+        """
+        Creates an alarm for the specified entity.
+        """
+        body = self.api._create_alarm_body(check_id, notification_plan_id,
+                *args, **kwargs)
+        uri = "/entities/%s/alarms" % (utils.get_id(entity))
+        return self._create(uri, body, return_none=return_none,
+                return_raw=return_raw)
+
+    
+    def update_alarm(self, entity, alarm):
+        pass
+
+
+    def delete_alarm(self, entity, alarm):
+        pass
+
+
 class CloudMonitoringClient(BaseClient):
     """
     This is the primary class for interacting with Cloud Monitoring.
