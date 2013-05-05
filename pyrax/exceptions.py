@@ -86,6 +86,9 @@ class KeyringModuleNotInstalled(PyraxException):
 class KeyringUsernameMissing(PyraxException):
     pass
 
+class InvalidAgentID(PyraxException):
+    pass
+
 class InvalidCDNMetadata(PyraxException):
     pass
 
@@ -107,7 +110,13 @@ class InvalidNodeCondition(PyraxException):
 class InvalidNodeParameters(PyraxException):
     pass
 
+class InvalidNotificationType(PyraxException):
+    pass
+
 class InvalidPTRRecord(PyraxException):
+    pass
+
+class InvalidRange(PyraxException):
     pass
 
 class InvalidSessionPersistenceType(PyraxException):
