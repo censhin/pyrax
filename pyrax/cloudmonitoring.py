@@ -104,6 +104,27 @@ class CloudMonitoringAlarm(BaseResource):
     pass
 
 
+class CloudMonitoringNotificationPlan(BaseResource):
+    """
+    This class represents a Cloud Monitoring Notification Plan.
+    """
+    pass
+
+
+class CloudMonitoringNotification(BaseResource):
+    """
+    This class represents a Cloud Monitoring Notification.
+    """
+    pass
+
+
+class CloudMonitoringAgentToken(BaseResource):
+    """
+    This class represents a Cloud Monitoring Agent Token.
+    """
+    pass
+
+
 class CloudMonitoringManager(BaseManager):
     """
     Created to override the methods _list, _get, and
@@ -333,6 +354,39 @@ class CloudMonitoringManager(BaseManager):
         return self._delete(uri)
 
 
+    def create_notification_plan(self, label, *args, **kwargs):
+        """
+        Creates a notification plan.
+        """
+        body = self.api._create_notification_plan_body(label=label, *args,
+                **kwargs)
+        uri = self.uri_base
+        return self._create(uri, body, return_none=return_none,
+                return_raw=return_raw)
+
+
+    def create_notification(self, details, label, notification_type, *args,
+            **kwargs):
+        """
+        Creates a notification.
+        """
+        body = self.api._create_notification_body(details=details, label=label,
+                notification_type=notification_type, *args, **kwargs)
+        uri = self.uri_base
+        return self._create(uri, body, return_none=return_none,
+                return_raw=return_raw)
+
+
+    def create_agent_token(self, *args, **kwargs):
+        """
+        Creates an agent token.
+        """
+        body = self.api._create_agent_token_body(*args, **kwargs)
+        uri = self.uri_base
+        return self._create(uri, body, return_none=return_none,
+                return_raw=return_raw)
+
+
 class CloudMonitoringClient(BaseClient):
     """
     This is the primary class for interacting with Cloud Monitoring.
@@ -349,6 +403,13 @@ class CloudMonitoringClient(BaseClient):
                 resource_class=CloudMonitoringAlarm, uri_base="entities")
         self._check_type_manager = CloudMonitoringManager(self,
                 uri_base="check_types", resource_class=CloudMonitoringCheckType)
+        self._notification_plan_manager = CloudMonitoringManager(self,
+                uri_base="notification_plans",
+                resource_class=CloudMonitoringNotificationPlan)
+        self._notification_manager = CloudMonitoringManager(self,
+                uri_base="notifications", resource_class=CloudMonitoringNotification)
+        self._agent_token_manager = CloudMonitoringManager(self,
+                uri_base="agent_tokens", resource_class=CloudMonitoringAgentToken)
 
 
     def list_checks(self, entity):
