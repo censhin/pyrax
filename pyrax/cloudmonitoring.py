@@ -340,7 +340,8 @@ class CloudMonitoringManager(BaseManager):
         return self._create(uri, body, return_none=return_none,
                 return_raw=return_raw)
 
-    
+
+    #TODO
     def update_alarm(self, entity, alarm):
         pass
 
@@ -381,6 +382,7 @@ class CloudMonitoringManager(BaseManager):
                 return_raw=return_raw)
 
 
+    #TODO
     def update_notification_plan(self):
         pass
 
@@ -391,6 +393,22 @@ class CloudMonitoringManager(BaseManager):
         """
         uri = "%s/%s" % (self.uri_base, utils.get_id(notification_plan))
         return self._delete(uri)
+
+
+    def list_notifications(self):
+        """
+        List notifications for the account.
+        """
+        uri = self.uri_base
+        return self._list(uri)
+
+
+    def get_notification(self, notification):
+        """
+        Gets the specified notification.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(notification))
+        return self._get(uri)
 
 
     def create_notification(self, details, label, notification_type, *args,
@@ -405,6 +423,35 @@ class CloudMonitoringManager(BaseManager):
                 return_raw=return_raw)
 
 
+    #TODO
+    def update_notification(self):
+        pass
+
+
+    def delete_notification(self, notification):
+        """
+        Deletes the specified notification.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(notification))
+        return self._delete(uri)
+
+
+    def list_agent_tokens(self):
+        """
+        List agent tokens for the account.
+        """
+        uri = self.uri_base
+        return self._list(uri)
+
+
+    def get_agent_token(self, agent_token):
+        """
+        Gets the specified agent token.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(agent_token))
+        return self._get(uri)
+
+
     def create_agent_token(self, *args, **kwargs):
         """
         Creates an agent token.
@@ -413,6 +460,19 @@ class CloudMonitoringManager(BaseManager):
         uri = self.uri_base
         return self._create(uri, body, return_none=return_none,
                 return_raw=return_raw)
+
+   
+    #TODO
+    def update_agent_token(self):
+        pass
+
+
+    def delete_agent_token(self, agent_token):
+        """
+        Delete the specified agent token from your account.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(agent_token))
+        return self._delete(uri)
 
 
 class CloudMonitoringClient(BaseClient):
