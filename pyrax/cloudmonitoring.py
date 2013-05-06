@@ -31,6 +31,13 @@ import pyrax.utils as utils
 AGENT_ID_PATTERN = re.compile(r"^[-\.\w]{1,255}$", re.VERBOSE)
 
 
+class CloudMonitoringAccount(BaseResource):
+    """
+    This class represents a Cloud Monitoring Account.
+    """
+    pass
+
+
 class CloudMonitoringEntity(BaseResource):
     """
     This class represents a Cloud Monitoring Entity.
@@ -180,6 +187,46 @@ class CloudMonitoringManager(BaseManager):
         if return_raw:
             return body
         return self.resource_class(self, body)
+
+
+    def get_account(self):
+        """
+        Returns account information.
+        """
+        uri = self.base_uri
+        return self._get(uri)
+
+
+    def update_account(self, metadata=None, webhook_token=None):
+        """
+        Updates properties on an account.
+        """
+        if metadata is None:
+            metadata = self.metadata
+        if webhook_token is None:
+            webhook_token = self.webhook_token
+        uri = self.base_uri
+        body = {"metadata": metadata,
+                "webhook_token": webhook_token
+                }
+        _resp, body = self.api.method_put(uri, body=body)
+        return body
+
+
+    def get_limits(self):
+        """
+        Returns account resource limits.
+        """
+        uri = "limits"
+        return self._get(uri)
+
+
+    def list_audits(self):
+        """
+        Lists audits for this account.
+        """
+        uri = "audits"
+        return self._get(uri)
 
 
     def update_entity(self, entity, label=None, agent_id=None, ip_addresses=None,
@@ -489,15 +536,20 @@ class CloudMonitoringClient(BaseClient):
                 resource_class=CloudMonitoringCheck, uri_base="entities")
         self._alarm_manager = CloudMonitoringManager(self,
                 resource_class=CloudMonitoringAlarm, uri_base="entities")
+        self._account_manage = CloudMonitoringManager(self,
+                resource_class=CloudMonitoringAccount, uri_base="account")
         self._check_type_manager = CloudMonitoringManager(self,
-                uri_base="check_types", resource_class=CloudMonitoringCheckType)
+                uresource_class=CloudMonitoringCheckType,
+                uri_base="check_types")
         self._notification_plan_manager = CloudMonitoringManager(self,
-                uri_base="notification_plans",
-                resource_class=CloudMonitoringNotificationPlan)
+                resource_class=CloudMonitoringNotificationPlan,
+                uri_base="notification_plans")
         self._notification_manager = CloudMonitoringManager(self,
-                uri_base="notifications", resource_class=CloudMonitoringNotification)
+                resource_class=CloudMonitoringNotification,
+                uri_base="notifications")
         self._agent_token_manager = CloudMonitoringManager(self,
-                uri_base="agent_tokens", resource_class=CloudMonitoringAgentToken)
+                resource_class=CloudMonitoringAgentToken,
+                uri_base="agent_tokens")
 
 
     def list_checks(self, entity):
