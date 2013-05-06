@@ -354,6 +354,22 @@ class CloudMonitoringManager(BaseManager):
         return self._delete(uri)
 
 
+    def list_notification_plan(self):
+        """
+        List notification plans for the account.
+        """
+        uri = self.uri_base
+        return self._list(uri)
+
+
+    def get_notification_plan(self, notification_plan):
+        """
+        Gets a specified notification plan.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(notification_plan))
+        return self._get(uri)
+   
+
     def create_notification_plan(self, label, *args, **kwargs):
         """
         Creates a notification plan.
@@ -363,6 +379,18 @@ class CloudMonitoringManager(BaseManager):
         uri = self.uri_base
         return self._create(uri, body, return_none=return_none,
                 return_raw=return_raw)
+
+
+    def update_notification_plan(self):
+        pass
+
+
+    def delete_notification_plan(self, notification_plan):
+        """
+        Deletes the specified notification plan.
+        """
+        uri = "%s/%s" % (self.uri_base, utils.get_id(notification_plan))
+        return self._delete(uri)
 
 
     def create_notification(self, details, label, notification_type, *args,
